@@ -25,7 +25,7 @@ pip install git+https://github.com/SamsonandDelilah/SciLab.git#subdirectory=pyth
 from scilib import GradToRadians, RadiansToGrad
 
 # Safe usage with validation
-result = GradToRadians("180")                   # will generate error, display the error
+result = GradToRadians("N 180°")                # will generate error, displays the error
 if result is not None:                          # and provides a 'None' value
     s = result * 34
 else:
@@ -33,6 +33,7 @@ else:
 
 # Broad format spectrum
 print(GradToRadians(180.57))                    # Decimal degrees
+print(GradToRadians("180°"))                    # DMS
 print(GradToRadians("180°20'13''"))             # DMS
 print(GradToRadians("2.3456e1"))                # Scientific
 print(GradToRadians(mpfr("180.57")))            # High-Precision
