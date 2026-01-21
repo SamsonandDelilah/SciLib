@@ -1,6 +1,6 @@
 ## SciLib - Precision Angle Conversion Library
 
-**Unified single Source-of-Truth (SOT= conversion for ALL input formats with automatic validation!**
+**Unified single Source-of-Truth (SOT) conversion for ALL input formats with automatic validation!**
 
 ## 🚀 Motivation ##
 
@@ -52,6 +52,8 @@ print(RadiansToGrad("1.234e1"))                 # Scientific
 | Scientific | `"1.234e2"` |
 | High-Precision | `mpfr("3.14159", 256)` |
 
+Supported types are integer, float, decimal and BigFloat (with mfpr string format).
+
 ## 🛠 Roadmap
 
 ```
@@ -61,11 +63,13 @@ SciLab (Monorepo)
 └── cpp/        → #include <scilib-cpp>
 ```
 
+It ist indented to expand this SciLib continously (fully supporting a simple SOT approach only), help is welcome.
+
 ## 🤝 Feedback Welcome!
+
+I would love to hear from you, what you think about or how I can help or how you possible would like to help me.
 
 https://github.com/SamsonandDelilah/SciLab/issues
 
 **For 3D Graphics, Physics, Astronomy and more!** ⭐
-```
 
-**Perfect professional English README!** 🚀
