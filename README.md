@@ -1,7 +1,7 @@
 ## SciLib - High-Precision Scientific Library
-### - Angle Conversion (deg_to_rad, rad_to_deg)
-
 **Unified single Source-of-Truth (SOT) conversion for ALL input formats with automatic validation!**
+Contents:
+1. Angle Conversion (deg_to_rad, rad_to_deg)
 
 ## 🚀 Motivation ##
 
@@ -78,7 +78,7 @@ SciLib (Monorepo)
 └── cpp/        → #include <scilib-cpp>
 ```
 
-It ist indented to expand this SciLib continously (fully supporting a simple SOT approach only), help is welcome - I am a beginner.
+It is indented to expand this SciLib continously (fully supporting a simple SOT approach only), help is welcome - I am a beginner.
 
 ## 🤝 Feedback Welcome!
 
