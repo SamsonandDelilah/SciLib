@@ -6,9 +6,13 @@
 
 **Problem:** Every library handles angle systems differently:
 
-`numpy.deg2rad("180°20'")`     → Error
-`math.radians("180.57degree")` → Error  
-`scipy.invalid_input("2g")`    → Error
+| Library | Exmaple | Result |
+|---------|----------|----------|
+| numpy   | `np.deg2rad("180°20'")` | ❌ Error |
+| math    | `math.radians("180.57degree")` | ❌ Error |
+| scipy   | `scipy.invalid_input("2g")` | ❌ Error |
+| **scilib** | `deg_to_rad("180°20'")` | ✅ 3.14... |
+
 
 
 **SciLib solves it:** **1 API → all formats** with precision checking!
@@ -41,8 +45,8 @@ print(deg_to_rad("180°68'10''"))                  # incorrect DMS example
 print(deg_to_rad(2.3456e1))                       # Scientific notation example
 print(deg_to_rad("2.3456e1"))                     # Scientific notation example
 print(deg_to_rad(mpfr("181.57")))                 # mpfr decimal degrees example
-print(deg_to_rad(mpfr("N 181.57")))               # incorrect mpfr decimal degrees example
-print(deg_to_rad(mpfr("1.89°")))                  # incorrect mpfr decimal degrees example
+print(deg_to_rad(mpfr("N 181.57")))               # ❌ will display Error, incorrect mpfr string format 
+print(deg_to_rad(mpfr("1.89°")))                  # ❌ will display Error, incorrect mpfr string format 
 
 print("\nRadians → Degrees:")
 print(rad_to_deg(3.14))  
