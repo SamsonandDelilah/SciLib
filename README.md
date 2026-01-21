@@ -1,5 +1,4 @@
-```markdown
-## SciLib - Precision Angle Conversion Library ##
+## SciLib - Precision Angle Conversion Library
 
 **Unified single Source-of-Truth (SOT= conversion for ALL input formats with automatic validation!**
 
