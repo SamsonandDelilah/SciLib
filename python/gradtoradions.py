@@ -1,88 +1,114 @@
+#
+#   --- SciLib ---
+#
+
+# define imports
 import numpy as np
 import re
 from decimal import Decimal
 from gmpy2 import mpfr, const_pi
 
+# helper function for DMS
+def parse_flexible_dms(dms_string):
+    """
+    Parse flexible DMS format: "180°", "180°20'", "180°20'13''"
+    Returns decimal degrees or None if invalid.
+    """
+    # Flexible DMS: 1-3 components after °
+    flexible_dms = r"^(-?\d+)(°(?:\s*(\d+)'?(?:\s*(\d+)''?)?)?)?$"
+    match = re.match(flexible_dms, dms_string.strip())
+    
+    if not match:
+        return None
+    
+    grad = int(match.group(1))
+    minuten = int(match.group(3)) if match.group(3) else 0
+    sekunden = int(match.group(4)) if match.group(4) else 0
+    return grad + minuten/60 + sekunden/3600
+
+
+# function to convert from Grad to Radians     
 def GradToRadians(x):
     """
-    Konvertiert Winkelangaben in Radianten.
+    Converts angle inputs to radians.
 
-    Unterstützte Eingabeformate:
-    - Dezimalgrad (float, int, Decimal, BigFloat)
-    - DMS-Format als String (z.B. "180°34'12''")
-    - Wissenschaftliche Notation als String oder Zahl (z.B. "2.3456e1", 2.3456e1)
+    Supported input formats:
+    - Decimal degrees (float, int, Decimal, BigFloat)
+    - Flexible DMS: "180°", "180°20'", "180°20'13''"
+    - Decimal/scientific strings: "180.57", "2.3456e1" or mpfr('180.001')
 
-    :param x: Der Winkel, der konvertiert werden soll. Entweder ein numerischer Wert oder ein String.
-    :return: Der Winkel in Radianten oder None bei Fehler.
+    :param x: Angle to convert. Numeric or string.
+    :return: Radians (mpfr) or None on error.
     """
-    error_message = None  # Variable für die Fehlermeldung
+    error_message = None
+    # **KRITISCHER FIX ZUERST** - vor allen isinstance!
+    if isinstance(x, mpfr):
+        x_str = str(x)
+        if any(symbol in x_str for symbol in ['°', "'", '"', "'"]):
+            print(f"mpfr input invalid: '{x}'. Use: mpfr('180.57') without symbols.")
+            return None
     try:
-        # Überprüfen, ob die Eingabe ein unterstützter numerischer Typ ist
+
+        # Numeric input
         if isinstance(x, (int, float, Decimal, mpfr)):
-            # Umwandlung in float für die Radianten-Konvertierung
             if isinstance(x, mpfr):
-                decimal_value = x  # BigFloat in float konvertieren
+                x_str = str(x)
+                if '°' in x_str:
+                    raise ValueError(f"mpfr cannot parse degree symbol: {x_str}")
+                decimal_value = x
             elif isinstance(x, Decimal):
-                decimal_value = mpfr(str(x))   # Decimal in float konvertieren
+                decimal_value = mpfr(str(x))
             else:
-                decimal_value = mpfr(x)           # Direkte float oder int-Nutzung
-                
-            # Rückgabe in Radianten (mpfr mit hoher Präzision)
-            radians = decimal_value * const_pi() / mpfr('180')
-            return radians
+                decimal_value = mpfr(x)
+            return decimal_value * const_pi() / mpfr('180')
 
-        # Überprüfen auf ein DMS-Format oder wissenschaftliche Notation im String-Format
+        # String input
         elif isinstance(x, str):
-            dms_pattern = r"^(-?\d+)°(\d+)'(\d+)''$"  # Regex für DMS-Format
-            scientific_pattern = r"^(-?\d+(?:\.\d+)?e[+-]?\d+)$"  # Regex für wissenschaftliche Notation
+            # 1. Flexible DMS
+            dms_decimal = parse_flexible_dms(x)
+            if dms_decimal is not None:
+                return mpfr(dms_decimal) * const_pi() / mpfr('180')
             
-            # Überprüfen, ob das Eingabemuster DMS entspricht
-            match_dms = re.match(dms_pattern, x)
-            # Überprüfen, ob das Eingabemuster der wissenschaftlichen Notation entspricht
+            # 2. Decimal: "180.57"
+            decimal_pattern = r"^(-?\d+(?:\.\d+)?)$"
+            # 3. Scientific: "2.3456e1"
+            scientific_pattern = r"^(-?\d+(?:\.\d+)?[eE][+-]?\d+)$"
+            
+            match_decimal = re.match(decimal_pattern, x)
             match_scientific = re.match(scientific_pattern, x)
-
-            if match_dms:
-                # DMS Extraktion
-                grad = int(match_dms.group(1))                  # Grad extrahieren
-                minuten = int(match_dms.group(2))                # Minuten extrahieren
-                sekunden = int(match_dms.group(3))               # Sekunden extrahieren
-                decimal_grad = grad + (minuten / 60) + (sekunden / 3600)
-                # Umrechnung in Dezimalgrad, # Rückgabe des Wertes in Radianten
-                return mpfr(decimal_grad) * const_pi() / mpfr('180')  # mpfr statt np.radians!
-
-                
-            elif match_scientific:
-                # Konvertierung von wissenschaftlicher Notation in float
-                return mpfr(x) * const_pi() / mpfr('180')  # mpfr statt float
-                
+            
+            if match_decimal or match_scientific:
+                return mpfr(x) * const_pi() / mpfr('180')
+            
             else:
-                error_message = f"Ungültiges Format: '{x}'.\nBitte verwende 'Grad°Minuten'Sekunden'' oder wissenschaftliche Notation.\n"
+                error_message = f"Invalid format: '{x}'.\nUse: 180.57, '180°', '180°20'', '180°20'13''', 2.3456e1 or mfpr('180.0')"
         
         else:
-            error_message = "Eingabe muss entweder ein numerisch oder eine Zeichenkette sein.\n"
+            error_message = "Input must be numeric or string."
     
-    except Exception as e:  # Fängt alle Arten von Fehlern ab
-        error_message = str(e)  # Speichere die Fehlermeldung
+    except Exception as e:
+        error_message = str(e)
     
     if error_message:
-        print(error_message)  # Gebe die Fehlermeldung aus
-        return None  # Rückgabe von None bei Fehler
+        print(error_message)
+        return None
 
+# function to convert from Radians to Grad   
 def RadiansToGrad(x):
     """
-    Konvertiert Winkelangaben von Radianten in Grad.
+    Converts radians to degrees or parses DMS to decimal degrees.
     
-    Unterstützte Eingabeformate:
-    - Dezimalradianten (float, int, Decimal, mpfr)
-    - DMS-Format als String (wird zu Radianten konvertiert)
-    - Wissenschaftliche Notation als String oder Zahl
-    
-    :param x: Der Winkel in Radianten. Numerischer Wert oder String.
-    :return: Der Winkel in Grad (mpfr) oder None bei Fehler.
+    Supported formats:
+    - Radians (float, int, Decimal, mpfr)
+    - Flexible DMS: "180°", "180°20'", "180°20'13''"
+    - Decimal/scientific strings → radians → degrees
+
+    :param x: Angle in radians or DMS string.
+    :return: Degrees (mpfr) or None on error.
     """
     error_message = None
     try:
-        # Numerische Typen
+        # Numeric input (radians)
         if isinstance(x, (int, float, Decimal, mpfr)):
             if isinstance(x, mpfr):
                 radian_value = x
@@ -90,36 +116,30 @@ def RadiansToGrad(x):
                 radian_value = mpfr(str(x))
             else:
                 radian_value = mpfr(x)
-            
-            # Umrechnung: grad = radian * 180 / π
-            grad = radian_value * mpfr('180') / const_pi()
-            return grad
+            return radian_value * mpfr('180') / const_pi()
 
-        # String Verarbeitung (DMS → Radiant → Grad)
+        # String input
         elif isinstance(x, str):
-            dms_pattern = r"^(-?\d+)°(\d+)'(\d+)''$"
+            # 1. Flexible DMS → direkt Degrees
+            dms_decimal = parse_flexible_dms(x)
+            if dms_decimal is not None:
+                return mpfr(dms_decimal)
+            
+            # 2. Decimal/Scientific → radians → degrees
+            decimal_pattern = r"^(-?\d+(?:\.\d+)?)$"
             scientific_pattern = r"^(-?\d+(?:\.\d+)?[eE][+-]?\d+)$"
             
-            match_dms = re.match(dms_pattern, x)
+            match_decimal = re.match(decimal_pattern, x)
             match_scientific = re.match(scientific_pattern, x)
-
-            if match_dms:
-                # Bereits in Grad → direkt zurückgeben
-                grad = int(match_dms.group(1))
-                minuten = int(match_dms.group(2))
-                sekunden = int(match_dms.group(3))
-                dezimal_grad = grad + (minuten / 60) + (sekunden / 3600)
-                return mpfr(dezimal_grad)
-                
-            elif match_scientific:
-                # Wissenschaftliche Notation → Radiant → Grad
+            
+            if match_decimal or match_scientific:
                 return mpfr(x) * mpfr('180') / const_pi()
-                
+            
             else:
-                error_message = f"Ungültiges Format: '{x}'.\nVerwende Radianten oder DMS.\n"
+                error_message = f"Invalid format: '{x}'.\nUse: radians 3.14, 1.234e1"
         
         else:
-            error_message = "Eingabe muss numerisch oder String sein."
+            error_message = "Input must be numeric or string."
     
     except Exception as e:
         error_message = str(e)
@@ -129,22 +149,28 @@ def RadiansToGrad(x):
         return None
 
 
-# Beispiele zur Verwendung der Funktion
-result = GradToRadians("180")
-if result is not None:
-    s = result * 34
-else:
-    print("Berechnung kann nicht durchgeführt werden.")
+# Usage examples
+if __name__ == "__main__":
+    result = GradToRadians("N 180")                  # will generate error, display the error
+    if result is not None:                          # and provides a 'None' value 
+        s = result * 34
+    else:
+        print("Calculation cannot be performed.\n")
 
-# Weitere Beispiele
-print(GradToRadians(180.57))               # Beispiel mit Dezimalgrad
-print(GradToRadians("180°20'13''"))        # Beispiel mit DMS
-print(GradToRadians("2.3456e1"))            # Beispiel mit wissenschaftlicher Notation
-print(GradToRadians(mpfr("180.57")) )              # Beispiel mit Dezimalgrad
+    # More examples
+    print(GradToRadians(180.57))                    # Decimal degrees example
+    print(GradToRadians("180.57"))                  # Decimal degrees example
+    print(GradToRadians("180°20'13''"))             # DMS example
+    print(GradToRadians(2.3456e1))                  # Scientific notation example
+    print(GradToRadians("2.3456e1"))                # Scientific notation example
+    print(GradToRadians(mpfr("180.57")))            # mpfr decimal degrees example
 
-print("Radians\n")
+    print("Radians\n")
 
-print(RadiansToGrad(np.pi))              # π → 180° (mpfr)
-print(RadiansToGrad(mpfr('3.1415926535', 128)))  # Hohe Präzision
-print(RadiansToGrad("1.234e1"))          # Wissenschaftlich → Grad
-print(RadiansToGrad("180°20'13''"))      # DMS → Grad (direkt)
+    print(RadiansToGrad(3.14))  
+    print(RadiansToGrad("3.14"))  
+    print(RadiansToGrad(np.pi))                     # π → 180° (mpfr)
+    print(RadiansToGrad(mpfr('3.1415926535', 128))) # High precision
+    print(RadiansToGrad("1.234e1"))                 # Scientific → Degrees
+    print(RadiansToGrad("0.40938442")  )            # DMS → Degrees (direct)
+
