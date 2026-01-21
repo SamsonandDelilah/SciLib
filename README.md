@@ -19,12 +19,6 @@ Contents:
 
 **SciLib solves it:** **1 API → all formats** with precision checking!
 
-## 📦 Installation
-
-```Powershel or bash
-pip install git+https://github.com/SamsonandDelilah/SciLib.git#subdirectory=python
-```
-
 ## 💻 Usage ##
 
 ```python
@@ -80,6 +74,13 @@ SciLib (Monorepo)
 ```
 
 It is indented to expand this SciLib continously (fully supporting a simple SOT approach only), help is welcome - I am a beginner.
+
+## 📦 Installation
+
+```Powershel or bash
+pip install git+https://github.com/SamsonandDelilah/SciLib.git#subdirectory=python
+```
+
 
 ## 🤝 Feedback Welcome!
 
