@@ -29,8 +29,8 @@ pip install git+https://github.com/SamsonandDelilah/SciLab.git#subdirectory=pyth
 from scilib import deg_to_rad, rad_to_deg
 
 # Safe usage with validation
-result = deg_to_rad("N 180°")                     # will generate error, displays the error
-if result is not None:                            # and provides a 'None' value
+result = deg_to_rad("N 180°")                     # ❌ will display Error and provides a 'None' value
+if result is not None:                            
     s = result * 34
 else:
     print("Calculation cannot be performed.")
