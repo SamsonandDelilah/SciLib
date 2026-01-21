@@ -73,7 +73,7 @@ SciLib (Monorepo)
 └── cpp/        → #include <scilib-cpp>
 ```
 
-It is indented to expand this SciLib continously (fully supporting a simple SOT approach only), help is welcome - I am a beginner.
+It is indented to expand this SciLib continously (fully supporting a simple SOT approach only), help is welcome.
 
 ## 📦 Installation
 
