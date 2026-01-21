@@ -41,7 +41,7 @@ def GradToRadians(x):
     :return: Radians (mpfr) or None on error.
     """
     error_message = None
-    # **KRITISCHER FIX ZUERST** - vor allen isinstance!
+    
     if isinstance(x, mpfr):
         x_str = str(x)
         if any(symbol in x_str for symbol in ['°', "'", '"', "'"]):
