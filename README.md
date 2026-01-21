@@ -7,7 +7,7 @@
 **Problem:** Every library handles angle systems differently:
 
 numpy.deg2rad("180°20'")     → Error
-math.radians("180.57grad")   → Error  
+math.radians("180.57degree")   → Error  
 scipy.invalid_input("2g")    → Error
 
 
@@ -22,33 +22,42 @@ pip install git+https://github.com/SamsonandDelilah/SciLab.git#subdirectory=pyth
 ## 💻 Usage ##
 
 ```python
-from scilib import GradToRadians, RadiansToGrad
+from scilib import DegreeToRadians, RadiansToDegree
 
 # Safe usage with validation
-result = GradToRadians("N 180°")                # will generate error, displays the error
-if result is not None:                          # and provides a 'None' value
+result = DegreeToRadians("N 180°")                # will generate error, displays the error
+if result is not None:                            # and provides a 'None' value
     s = result * 34
 else:
     print("Calculation cannot be performed.")
 
 # Broad format spectrum
-print(GradToRadians(180.57))                    # Decimal degrees
-print(GradToRadians("180°"))                    # DMS
-print(GradToRadians("180°20'13''"))             # DMS
-print(GradToRadians("2.3456e1"))                # Scientific
-print(GradToRadians(mpfr("180.57")))            # High-Precision
+print("\nDegrees → Radians:")
+print(DegreeToRadians(180.57))                    # Decimal degrees example
+print(DegreeToRadians("180.57"))                  # Decimal degrees example
+print(DegreeToRadians("180°"))                    # DMS
+print(DegreeToRadians("180°40'13''"))             # DMS example
+print(DegreeToRadians("180°68'10''"))             # incorrect DMS example
+print(DegreeToRadians(2.3456e1))                  # Scientific notation example
+print(DegreeToRadians("2.3456e1"))                # Scientific notation example
+print(DegreeToRadians(mpfr("181.57")))            # mpfr decimal degrees example
+print(DegreeToRadians(mpfr("N 181.57")))          # incorrect mpfr decimal degrees example
+print(DegreeToRadians(mpfr("1.89°")))             # incorrect mpfr decimal degrees example
 
 print("\nRadians → Degrees:")
-print(RadiansToGrad(np.pi))                     # π → 180°
-print(RadiansToGrad(mpfr('3.1415926535', 128))) # 128-bit
-print(RadiansToGrad("1.234e1"))                 # Scientific
+print(RadiansToDegree(3.14))  
+print(RadiansToDegree("3.14"))  
+print(RadiansToDegree(np.pi))                     # π → 180° (mpfr)
+print(RadiansToDegree(mpfr('3.14159535', 128)))   # High precision
+print(RadiansToDegree("1.234e1"))                 # Scientific → Degrees
+print(RadiansToDegree("0.40938442"))              # DMS → Degrees (direct)
 ```
 
 ## 🎯 Supported Formats
 
 | Type | Examples |
 |------|----------|
-| Decimal grad | `180.57` |
+| Decimal degree | `180.57` |
 | DMS | `"180°20'13''"`  |
 | Scientific | `"1.234e2"` |
 | High-Precision | `mpfr("3.14159", 256)` |
