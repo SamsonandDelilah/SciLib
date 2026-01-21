@@ -25,8 +25,8 @@ pip install git+https://github.com/SamsonandDelilah/SciLab.git#subdirectory=pyth
 from scilib import GradToRadians, RadiansToGrad
 
 # Safe usage with validation
-result = GradToRadians("180")                   # will generate error, display the error and provide a None value
-if result is not None:
+result = GradToRadians("180")                   # will generate error, display the error
+if result is not None:                          # and provides a 'None' value
     s = result * 34
 else:
     print("Calculation cannot be performed.")
