@@ -9,6 +9,7 @@ description = "Precision scientific calculations"
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = ["numpy"]
+license = {file = "LICENSE"}  # MIT License auto-detected
 
 [project.optional-dependencies]
 precision = ["gmpy2>=2.1.0"]  # Für mpfr Nutzer
