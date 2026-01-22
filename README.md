@@ -88,5 +88,9 @@ I would love to hear from you, what you think about or how I can help or how you
 
 https://github.com/SamsonandDelilah/SciLib/issues
 
+## Licensing
+
+Scilib is released under the MIT license.
+
 **For 3D Graphics, Physics, Astronomy and more!** ⭐
 
