@@ -2,18 +2,18 @@
 **Unified single Source-of-Truth (SOT) conversion for ALL input formats with automatic validation!**
 
 Contents:
-1. Angle Conversion (deg_to_rad, rad_to_deg)
+1. Angle Conversion convert_angle_units.py (deg_to_rad, rad_to_deg, config)
 
 ## 🚀 Motivation ##
 
 **Problem:** Every library handles angle systems differently:
 
-| Library | Exmaple | Result |
+| Library | Example | Result |
 |---------|----------|----------|
 | numpy   | `np.deg2rad("180°20'")` | ❌ Error |
 | math    | `math.radians("180.57degree")` | ❌ Error |
 | scipy   | `scipy.invalid_input("2g")` | ❌ Error |
-| **scilib** | `deg_to_rad("180°20'")` | ✅ 3.14... |
+| **scilib** | `deg_to_rad("180°20'")` | ✅ 3.1415... |
 
 
 
@@ -22,7 +22,14 @@ Contents:
 ## 💻 Usage ##
 
 ```python
-from scilib import deg_to_rad, rad_to_deg
+# 1. Namespace Import (recommended)
+from scilib import deg_to_rad, rad_to_deg, config # Warning: mpfr is a wrapper of mpfr in convert_degree_to_radians()
+
+# 2. Direct Module Import  
+#from scilib.convert_angle_units import deg_to_rad
+
+config.errors.mode = "silent"                     # silent, warn, strict
+logger = logging.getLogger("scilib")
 
 # Safe usage with validation
 result = deg_to_rad("N 180°")                     # ❌ will display Error and provides a 'None' value
@@ -40,7 +47,7 @@ print(deg_to_rad("180°40'13''"))                  # DMS example
 print(deg_to_rad("180°68'10''"))                  # incorrect DMS example
 print(deg_to_rad(2.3456e1))                       # Scientific notation example
 print(deg_to_rad("2.3456e1"))                     # Scientific notation example
-print(deg_to_rad(mpfr("181.57")))                 # mpfr decimal degrees example
+print(deg_to_rad(mpfr("181.57")))                 # mpfr decimal degrees example, Warning: mpfr is a wrapper in convert_degree_to_radians()
 print(deg_to_rad(mpfr("N 181.57")))               # ❌ will display Error, incorrect mpfr string format 
 print(deg_to_rad(mpfr("1.89°")))                  # ❌ will display Error, incorrect mpfr string format 
 
@@ -63,6 +70,7 @@ print(rad_to_deg("0.40938442"))                   # DMS → Degrees (direct)
 | High-Precision | `mpfr("3.14159", 256)` |
 
 Supported types are integer, float, decimal and Arbitrary Precision with mfpr string format (gmpy2.py).
+Warning: mpfr is a wrapper of mpfr (from gmpy2.py) in convert_angle_units()
 
 ## 🛠 Roadmap
 
@@ -73,7 +81,10 @@ SciLib (Monorepo)
 └── cpp/        → #include <scilib-cpp>
 ```
 
-It is indented to expand this SciLib continously (fully supporting a simple SOT approach only), help is welcome.
+It is intended to expand this SciLib continously (fully supporting a simple SOT approach only), help is welcome.
+Next steps:
+- inlcude rad, gon, milrad, mil
+- setup data concept for SciLib
 
 ## 📦 Installation
 
