@@ -1,13 +1,23 @@
 #
-#   --- SciLib ---
+#   --- degree_to_radians and vice versa ---
 #
 
+# degree_to_radians.py - DEV ONLY
+try:
+    from scilib.config import config
+except ImportError:
+    from config import config  # local dev name
+    
 # define imports
 import numpy as np
 import re
 from decimal import Decimal
 from gmpy2 import const_pi      # mfr uses a wrapper function mpfr()
+from config import config
+import logging
 
+config.errors.mode = "silent"       # silent, warn, strict
+logger = logging.getLogger("scilib")
 
 # helper function for DMS
 def parse_flexible_dms(dms_string):
@@ -25,7 +35,7 @@ def parse_flexible_dms(dms_string):
     minuten = int(match.group(3)) if match.group(3) else 0
     sekunden = int(match.group(4)) if match.group(4) else 0
     
-    # VALIDierung Min/Sek <60
+    # validation Min/Sec <60
     if minuten >= 60 or sekunden >= 60:
         return None
         
@@ -52,8 +62,7 @@ def deg_to_rad(x):
     if isinstance(x, mf.mpfr):
         x_str = str(x)
         if any(symbol in x_str for symbol in ['°', "'", '"', "'"]):
-            print(f"mpfr input invalid: '{x}'. Use: mpfr('180.57') without symbols.")
-            return None
+            config.handle_error(f"mpfr input contains DMS symbols: {x}")
 
     try:
 
@@ -89,17 +98,18 @@ def deg_to_rad(x):
                 return mf.mpfr(x) * const_pi() / mf.mpfr('180')
             
             else:
-                error_message = f"Invalid format: '{x}'.\nUse: 180.57, '180°', '180°20'', '180°20'13''', 2.3456e1 or mfpr('180.0')"
+                return config.handle_error(
+                    f"Invalid format: '{x}'.\n"
+                    "Use one of: 180.57, '180°', '180°20'', '180°20'13''', 2.3456e1, mpfr('180.0')"
+                )
+
         
         else:
-            error_message = "Input '{x}' must be numeric or valid string."
+            return config.handle_error("Input '{x}' must be numeric or valid string.")
     
     except Exception as e:
-        error_message = str(e)        
-    
-    if error_message:
-        print(error_message)
-        return None
+        return config.handle_error(f"Conversion failed: {str(e)}")
+
 
             
 # function to convert from Radians to Degree   
@@ -147,29 +157,33 @@ def rad_to_deg(x):
                 return mf.mpfr(x) * mf.mpfr('180') / const_pi()
             
             else:
-                error_message = f"Invalid format: '{x}'.\nUse: radians 3.14, 1.234e1"
+                config.handle_error(f"Invalid format: '{x}'.\nUse: radians 3.14, 1.234e1")
         
         else:
-            error_message = "Input must be numeric or string."
+            config.handle_error("Input must be numeric or string.")
     
     except Exception as e:
-        error_message = str(e)
-    
-    if error_message:
-        print(error_message)
-        return None
+        return config.handle_error(f"Conversion failed: {str(e)}")
+
 
 # mpfr wraper function 
 def mpfr(value, bit=128):
-    import gmpy2 as mf
+    """Safe mpfr wrapper - float check first."""
     try:
-        s = float(value)
-        s = mf.mpfr(value, bit)
-    except Exception as e: 
-        #print("nok: ", value)
-        return value
-    #print("ok: ", s)
-    return s
+        import gmpy2 as mf
+        
+        # 1. Float-Test blockiert "180°" → handle_error → None ✓
+        _ = float(value)  
+        
+        # 2. mpfr nur bei gültigem Float
+        return mf.mpfr(str(value), bit)
+        
+    except Exception:
+        # Dein Fallback!
+        return config.handle_error(
+            f"mpfr conversion failed for '{value}'"
+        ) or value  # Fallback zu Original
+
 
 
 # Usage examples
