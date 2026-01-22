@@ -24,7 +24,7 @@ except ImportError:
 import numpy as np
 import re
 from decimal import Decimal
-#from gmpy2 import const_pi      # mfr uses a wrapper function mpfr()
+from gmpy2 import const_pi      # mfr uses a wrapper function mpfr()
 #from config import config
 import logging
 
