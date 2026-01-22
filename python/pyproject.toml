@@ -1,3 +1,4 @@
+# SciLib/pyproject.toml (REPO-ROOT!)
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -21,3 +22,9 @@ data = ["importlib_resources"]          # Production data loader
 # Usage:
 # pip install scilib                    → Basic (float fallback)
 # pip install "scilib[precision]"       → High-Precision (gmpy2)
+
+
+
+
+
+

@@ -11,9 +11,6 @@ from pathlib import Path
 # Logger setup
 logger = logging.getLogger("scilib")
 
-# absolute path for editable install
-REPO_ROOT = Path(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-DATA_PATH = REPO_ROOT.parent / "data"  
 
 def _get_data_path() -> Path:
     """KORRIGIERT für SciLib/data/ (alle Sprachen!)"""
