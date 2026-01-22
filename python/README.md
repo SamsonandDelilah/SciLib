@@ -1,4 +1,4 @@
-## SciLib - High-Precision Scientific Library
+## SciLib Python - High-Precision Scientific Library 
 **Unified single Source-of-Truth (SOT) conversion for ALL input formats with automatic validation!**
 
 Contents:

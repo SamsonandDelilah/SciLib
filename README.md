@@ -1,5 +1,5 @@
 # SciLib - High-Precision Scientific Library (Monorepo)
-
+**Unified single Source-of-Truth (SOT) conversion for ALL input formats with automatic validation!**
 **Single Source-of-Truth (SOT) für Physics, Astronomy, 3D Graphics**
 
 ## 🚀 Languages
