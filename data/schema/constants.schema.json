@@ -1,0 +1,145 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "SciLib Constants Schema",
+    "description": "Single Source of Truth für alle physikalischen Konstanten, Materialien, Einheiten",
+    "type": "object",
+    "required": [
+        "symbol",
+        "name",
+        "value",
+        "category"
+    ],
+    "properties": {
+        "symbol": {
+            "type": "string",
+            "description": "Internationale Symbol (c, h, N, steel_1.4301)",
+            "pattern": "^[a-zA-Z0-9_.-]+$"
+        },
+        "name": {
+            "type": "string",
+            "description": "Vollständiger Name (SciPy-kompatibel)"
+        },
+        "value": {
+            "type": "number",
+            "description": "Numerischer Wert"
+        },
+        "unit": {
+            "type": "string",
+            "description": "Einheit (m s^-1, kg m^-3, Pa)"
+        },
+        "category": {
+            "type": "string",
+            "enum": [
+                "universal",
+                "electromagnetic",
+                "materials",
+                "astronomical",
+                "units",
+                "financial"
+            ],
+            "description": "Konstanten-Kategorie"
+        },
+        "uncertainty": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0.0,
+            "description": "Messunsicherheit (SciPy Format)"
+        },
+        "year": {
+            "type": "integer",
+            "description": "Jahr der Messung/Daten (CODATA 2018)"
+        },
+        "source": {
+            "type": "string",
+            "description": "Quelle (NIST, CODATA, MatWeb)"
+        },
+        "description": {
+            "type": "string",
+            "description": "Beschreibung für KI/Ontologie"
+        },
+        "category_data": {
+            "type": "object",
+            "description": "Kategorie-spezifische Daten",
+            "oneOf": [
+                {
+                    "properties": {
+                        "density": {
+                            "type": "number"
+                        },
+                        "yield_strength": {
+                            "type": "number"
+                        },
+                        "melting_point": {
+                            "type": "number"
+                        },
+                        "composition": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "si_base": {
+                            "type": "boolean"
+                        },
+                        "conversion_to_si": {
+                            "type": "number"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "mass": {
+                            "type": "number"
+                        },
+                        "radius": {
+                            "type": "number"
+                        },
+                        "albedo": {
+                            "type": "number"
+                        }
+                    }
+                }
+            ]
+        },
+        "relations": {
+            "type": "object",
+            "properties": {
+                "depends_on": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "derived_from": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "used_in": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "description": "Ontologie Relationen"
+        },
+        "ontology": {
+            "type": "object",
+            "description": "RDF/QUDT Annotationen",
+            "additionalProperties": true
+        },
+        "references": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "additionalProperties": false
+}

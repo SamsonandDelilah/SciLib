@@ -2,6 +2,8 @@
 import logging
 from typing import Any
 from enum import Enum
+from pathlib import Path
+import json
 
 # Logger setup
 logger = logging.getLogger("scilib")
@@ -42,13 +44,47 @@ class PrecisionConfig:
     digits = 20
     bits = 128  
 
+class ConstantsConfig:
+    """Constants subsystem configuration"""
+    def __init__(self):
+        self.version = "CODATA2022"
+        
 class Config:
     """Lists all available config handlers"""
     def __init__(self):
         self.errors = ErrorsConfig()
         self.si = SISystemConfig()
         self.precision = PrecisionConfig()
+        self.constants = ConstantsConfig() 
 
+        @property
+        def constants_version(self):
+            return self.constants.version
+        
+        @constants_version.setter
+        def constants_version(self, version):
+            self.constants.version = version
+            
+    def physical_constants(self, name, version=None):
+        """SciPy-kompatibel: ('speed of light') → (value, unit, unc)"""
+        if version is None:
+            version = self.constants.version
+        
+        # Versioned path
+        versioned_path = Path(f"data/constants/{version}/{name}.json")
+        if versioned_path.exists():
+            data = json.loads(versioned_path.read_text())
+        else:
+            # Latest fallback
+            latest_path = Path(f"data/constants/{name}.json")
+            data = json.loads(latest_path.read_text())
+        
+        return (
+            data["value"],
+            data["unit"],
+            data["uncertainty"]
+        )
+        
     def handle_error(self, msg: str) -> Any:
         """Unified error handling across SciLib."""
         mode = self.errors.mode
@@ -57,6 +93,8 @@ class Config:
         elif mode == ErrorMode.WARN:
             logger.warning(msg)
         return None  # SILENT
+    
+    
 
 # Global instance
 config = Config()
