@@ -114,22 +114,20 @@ class Config:
     def physical_constants(self, name, version=None):
         """Lazy load: default → cache hit, versioned → on-demand"""
         if version is None:
-            version = self.constants.version  # CODATA2022 default
+            version = self.constants.version
             
-        # Cache check (schnell!)
         cache_key = f"{name}_{version}"
         if hasattr(self, '_constants_cache') and cache_key in self._constants_cache:
             return self._constants_cache[cache_key]
         
-        # Lazy load
-        data_path = _get_data_path()
+        # ←←← FEHLT: Auto-Download!
+        data_path = _get_data_path()  # ensure_data() wird hier aufgerufen!
         json_path = data_path / f"constants/{version}/{name}.json"
         
         if json_path.exists():
             data = json.loads(json_path.read_text())
             result = (data["value"], data.get("unit", ""), data.get("uncertainty", 0.0))
             
-            # Cache für Performance
             if not hasattr(self, '_constants_cache'):
                 self._constants_cache = {}
             self._constants_cache[cache_key] = result

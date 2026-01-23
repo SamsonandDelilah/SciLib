@@ -6,4 +6,8 @@ Requires-Python: >=3.8
 License-File: LICENSE
 Requires-Dist: numpy
 Requires-Dist: gmpy2>=2.1.0
+Requires-Dist: requests
+Provides-Extra: dev
+Requires-Dist: requests; extra == "dev"
+Requires-Dist: jsonschema; extra == "dev"
 Dynamic: license-file

@@ -1,2 +1,7 @@
 numpy
 gmpy2>=2.1.0
+requests
+
+[dev]
+requests
+jsonschema
