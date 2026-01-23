@@ -14,17 +14,20 @@ logger = logging.getLogger("scilib")
 
 
 def _get_data_path():
-    """Get data directory - works for both dev AND installed package"""
+    """Data path: dev + installed package"""
     try:
-        # Installed package: importlib.resources (Python 3.9+)
+        # ✅ INSTALLED: importlib.resources (Python 3.7+)
         from importlib import resources
         return resources.files('scilib') / 'data'
-    except (ImportError, AttributeError):
-        # Dev fallback: relative to config.py
-        from pathlib import Path
-        return Path(__file__).parent / 'data'
-
-
+    except ImportError:
+        try:
+            # ✅ Python 3.9+: files()
+            from importlib.resources import files
+            return files('scilib') / 'data'
+        except (ImportError, AttributeError):
+            # ✅ DEV FALLBACK
+            from pathlib import Path
+            return Path(__file__).parent.parent / 'data'  # scilib/data/
 
     
 class ErrorMode(Enum):
