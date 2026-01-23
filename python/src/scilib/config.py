@@ -13,8 +13,8 @@ logger = logging.getLogger("scilib")
 
 
 def _get_data_path() -> Path:
-    """Repo-Root Packaging: python/src/scilib → ROOT → data/"""
-    # 1. Package data (Production)
+    """Repo-Root: python/src/scilib → ROOT → data/"""
+    # 1. Production: scilib/data/ (Wheel/SDist)
     try:
         import importlib.resources
         data_path = Path(importlib.resources.files('scilib') / 'data')
@@ -23,9 +23,11 @@ def _get_data_path() -> Path:
     except (ImportError, FileNotFoundError):
         pass
     
-    # 2. Dev Repo-Root: 4x dirname = SciLib/
-    repo_root = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))  # SciLib/
-    return repo_root / "data"  # ← ROOT/data/ !
+    # 2. Dev: 4x dirname → SciLib/ ROOT
+    repo_root = Path(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+    data_path = repo_root / "data"
+    return data_path
+
 
     
 class ErrorMode(Enum):
