@@ -1,0 +1,2 @@
+﻿recursive-include data *.json
+include data/constants/*.json
