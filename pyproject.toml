@@ -1,25 +1,14 @@
 # SciLib/pyproject.toml (REPO-ROOT!)
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
-# Wheel (Production)
-[tool.hatch.build.targets.wheel]
-packages = ["python/src/scilib"]     # ← Von ROOT!
-sources = { "scilib/data" = "data" }
-include = [
-  "data",                    # ← ROOT data/
-  "data/constants/*.json"    # ← Spezifisch!
-]
+[tool.setuptools.packages.find]
+where = ["python/src"]
 
-# SDist (Source)
-[tool.hatch.build.targets.sdist]
-include = [
-  "python/src/scilib",
-  "data/constants",                  # ← data/ ins SDist!
-  "README.md",
-  "LICENSE"
-]
+[tool.setuptools.package-data]
+"scilib" = ["data/**/*"]
+
 
 [project]
 name = "scilib"
