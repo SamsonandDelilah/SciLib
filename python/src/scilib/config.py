@@ -6,7 +6,8 @@ from pathlib import Path
 import json
 import os
 from pathlib import Path
-
+from importlib import resources
+constants_path = resources.files(__package__) / "data" / "constants"
 
 # Logger setup
 logger = logging.getLogger("scilib")
